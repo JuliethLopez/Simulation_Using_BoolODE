@@ -1,3 +1,5 @@
 tests/*
 src/__pycache__/*
+Curated/*
+logs/*
 .Rhistory
