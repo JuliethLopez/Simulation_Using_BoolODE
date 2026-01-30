@@ -13,18 +13,18 @@
 path_to_boolode=".."
 numcells="2000"
 numcellssample="2000" #100, 200, 500, 1000, 2000
-numdatasets="1"
+numdatasets="2"
 
 # Curated models
 
 # Here, we also run Slingshot on the sample of 500 cells, and then generate dropouts for that sample.
-output_dir="../Curated/"
+output_dir="../Curated/" #Test
 
 # mCAD
 output_name="mCAD"
 model_name="mCAD"
 numclusters="2"
-drop_probability=0.7 # Set to 0.5 for q=50, try 0, 0.5, 0.7
+drop_probability=0.5 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
 quantil=0.5
 quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 
@@ -35,25 +35,36 @@ quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 #        --nClusters $numclusters\
 #        --outPrefix $output_dir$output_name"/"
 
-for numcells in 100 200 500 1000 2000; do
-       numcellssample=$numcells
-       echo $numcells
+for n_cells in 100 200 500 1000 2000; do
+       numcellssample=$n_cells
+       echo $numcellssample
 
        python $path_to_boolode/scripts/genSamples.py -p $output_dir$output_name"/"\
               -n $numcellssample -d $numdatasets --outPrefix $output_name
 
-       echo "Generating dropouts for q="$quantil_name" for "$model_name
-       python $path_to_boolode/scripts/genDropouts.py  -e $output_dir$output_name"/"$output_name"-"$numcellssample"-1/ExpressionData.csv"\
-              -p $output_dir$output_name"/"$output_name"-"$numcellssample"-1/PseudoTime.csv"\
-              -r $output_dir$output_name"/"$output_name"-"$numcellssample"-1/refNetwork.csv"\
-              -n $numcellssample -d --drop-cutoff $quantil --drop-prob $drop_probability -i 1\
-              --outPrefix $output_dir$output_name"/"$output_name"-"$numcellssample"-1""/"$output_name
+       for n_dataset in $(seq 1 $numdatasets); do 
+              echo "Generating graphics for"$model_name" sample "$numcellssample" dataset "$n_dataset" without dropout"
+              model_folder=$output_dir$output_name
+              model_folder_cells=$output_name"-"$numcellssample"-"$n_dataset
+              output_folder=$model_folder"/"$model_folder_cells
+              echo $output_folder
+              python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
+         
+              for drop_probability in 0.5 0.7; do
+                     echo "Generating dropouts $drop_probability for q="$quantil_name" for "$model_name" sample "$numcellssample" dataset "$n_dataset
+                     python $path_to_boolode/scripts/genDropouts.py  -e $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/ExpressionData.csv"\
+                            -p $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/PseudoTime.csv"\
+                            -r $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/refNetwork.csv"\
+                            -n $numcellssample -d --drop-cutoff $quantil --drop-prob $drop_probability -i $n_dataset\
+                            --outPrefix $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/"$output_name
 
-       echo "Generating graphics for q=50 for "$model_name
-       model_folder=$output_dir$output_name
-       model_folder_cells=$output_name"-"$numcellssample"-1"
-       model_folder_dropout=$model_folder_cells"-"$quantil_name"-"$drop_probability
-       output_folder=$model_folder"/"$model_folder_cells"/"$model_folder_dropout
-       python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
-       
+                     echo "Generating graphics"
+                     model_folder=$output_dir$output_name
+                     model_folder_cells=$output_name"-"$numcellssample"-"$n_dataset
+                     model_folder_dropout=$model_folder_cells"-"$quantil_name"-"$drop_probability
+                     output_folder=$model_folder"/"$model_folder_cells"/"$model_folder_dropout
+                     echo $output_folder
+                     python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
+                     done
+              done
        done
