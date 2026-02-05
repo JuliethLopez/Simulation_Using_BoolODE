@@ -28,12 +28,12 @@ drop_probability=0.5 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
 quantil=0.5
 quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 
-# echo "Simulating "$model_name
-# python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.txt\
-#        --ics $path_to_boolode/data/$model_name"_ics.txt" --max-time 5 --num-cells $numcells\
-#        --do-parallel\
-#        --nClusters $numclusters\
-#        --outPrefix $output_dir$output_name"/"
+echo "Simulating "$model_name
+python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.txt\
+       --ics $path_to_boolode/data/$model_name"_ics.txt" --max-time 5 --num-cells $numcells\
+       --do-parallel\
+       --nClusters $numclusters\
+       --outPrefix $output_dir$output_name"/"
 
 for n_cells in 100 200 500 1000 2000; do
        numcellssample=$n_cells
