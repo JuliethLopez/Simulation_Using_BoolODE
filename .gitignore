@@ -1,5 +1,6 @@
 tests/*
 src/__pycache__/*
 Curated/*
+Curated_first_run/*
 logs/*
 .Rhistory

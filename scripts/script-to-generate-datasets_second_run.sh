@@ -13,7 +13,7 @@
 path_to_boolode=".."
 numcells="2000"
 numcellssample="2000" #100, 200, 500, 1000, 2000
-numdatasets="2"
+numdatasets="100"
 
 # Curated models
 
@@ -24,7 +24,7 @@ output_dir="../Curated/" #Test
 output_name="mCAD"
 model_name="mCAD"
 numclusters="2"
-drop_probability=0.5 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
+drop_probability=0.0 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
 quantil=0.5
 quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 
@@ -35,7 +35,7 @@ python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.
        --nClusters $numclusters\
        --outPrefix $output_dir$output_name"/"
 
-for n_cells in 100 200 500 1000 2000; do
+for n_cells in 200 1000 2000; do
        numcellssample=$n_cells
        echo $numcellssample
 
@@ -50,21 +50,21 @@ for n_cells in 100 200 500 1000 2000; do
               echo $output_folder
               python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
          
-              for drop_probability in 0.5 0.7; do
-                     echo "Generating dropouts $drop_probability for q="$quantil_name" for "$model_name" sample "$numcellssample" dataset "$n_dataset
-                     python $path_to_boolode/scripts/genDropouts.py  -e $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/ExpressionData.csv"\
-                            -p $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/PseudoTime.csv"\
-                            -r $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/refNetwork.csv"\
-                            -n $numcellssample -d --drop-cutoff $quantil --drop-prob $drop_probability -i $n_dataset\
-                            --outPrefix $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/"$output_name
+              # for drop_probability in 0.5 0.7; do
+              #        echo "Generating dropouts $drop_probability for q="$quantil_name" for "$model_name" sample "$numcellssample" dataset "$n_dataset
+              #        python $path_to_boolode/scripts/genDropouts.py  -e $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/ExpressionData.csv"\
+              #               -p $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/PseudoTime.csv"\
+              #               -r $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/refNetwork.csv"\
+              #               -n $numcellssample -d --drop-cutoff $quantil --drop-prob $drop_probability -i $n_dataset\
+              #               --outPrefix $output_dir$output_name"/"$output_name"-"$numcellssample"-"$n_dataset"/"$output_name
 
-                     echo "Generating graphics"
-                     model_folder=$output_dir$output_name
-                     model_folder_cells=$output_name"-"$numcellssample"-"$n_dataset
-                     model_folder_dropout=$model_folder_cells"-"$quantil_name"-"$drop_probability
-                     output_folder=$model_folder"/"$model_folder_cells"/"$model_folder_dropout
-                     echo $output_folder
-                     python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
-                     done
+              #        echo "Generating graphics"
+              #        model_folder=$output_dir$output_name
+              #        model_folder_cells=$output_name"-"$numcellssample"-"$n_dataset
+              #        model_folder_dropout=$model_folder_cells"-"$quantil_name"-"$drop_probability
+              #        output_folder=$model_folder"/"$model_folder_cells"/"$model_folder_dropout
+              #        echo $output_folder
+              #        python $path_to_boolode/scripts/genVis.py -i $output_folder"/ExpressionData.csv" -p $output_folder"/PseudoTime.csv"
+              #        done
               done
        done
