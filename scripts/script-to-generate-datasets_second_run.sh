@@ -1,3 +1,7 @@
+# (mCAD) The script used CPU, it took 8 hours (log.666738.out) and was required 20000 MB. BoolODE CAN NOT USE GPU, IT ONLY USES CPU.
+# (VSC) It took 3 hours 17 minutes (log.144433.out) and was required 5126 MB.
+# (HSC and GSD) It took          (log.152241.out) and was reuired            MB.
+
 # Set the path to your clone of the BoolODE repository here
 # The current options will perform stochastic simulations
 # using the default kinetic parameters.
@@ -20,17 +24,17 @@ numdatasets="100"
 # Here, we also run Slingshot on the sample of 500 cells, and then generate dropouts for that sample.
 output_dir="../Curated/" #Test
 
-# mCAD
-output_name="mCAD"
-model_name="mCAD"
-numclusters="2"
+# VSC
+model_name="VSC"
+output_name="VSC"
+numclusters="5"
 drop_probability=0.0 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
 quantil=0.5
 quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 
 echo "Simulating "$model_name
 python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.txt\
-       --ics $path_to_boolode/data/$model_name"_ics.txt" --max-time 5 --num-cells $numcells\
+       --max-time 5 --num-cells $numcells\
        --do-parallel\
        --nClusters $numclusters\
        --outPrefix $output_dir$output_name"/"
