@@ -1,8 +1,8 @@
-# They wererunned separately because jobs expired time innot enough to run all together
+# They were runned separately because jobs expired time innot enough to run all together
 # (mCAD) The script used CPU, it took 8 hours (log.666738.out) and was required 5115 MB. BoolODE CAN NOT USE GPU, IT ONLY USES CPU.
 # (VSC) It took 3 hours 17 minutes (log.144433.out) and was required 5126 MB.
 # (HSC) It took 17713 seconds (log.152241.out) and was reuired 5208 MB.
-# (GSD) 625025
+# (GSD) (756538) took 43205 seconds required 3507 MB and (763701) took 2025 seconds and took 9928 MB
 
 # Set the path to your clone of the BoolODE repository here
 # The current options will perform stochastic simulations
@@ -19,7 +19,7 @@
 path_to_boolode=".."
 numcells="2000"
 numcellssample="2000" #100, 200, 500, 1000, 2000
-numdatasets="100"
+numdatasets="1"
 
 # Curated models
 
@@ -182,14 +182,14 @@ drop_probability=0.0 # Set to 0.5 for q=50, try 0.0, 0.5, 0.7
 quantil=0.5
 quantil_name=$(awk "BEGIN {print int($quantil*100)}")
 
-echo "Simulating "$model_name
-python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.txt\
-       --max-time 8 --num-cells $numcells\
-       --do-parallel\
-       --nClusters $numclusters\
-       --outPrefix $output_dir$output_name"/"
+# echo "Simulating "$model_name
+# python $path_to_boolode/src/BoolODE.py --path $path_to_boolode/data/$model_name.txt\
+#        --max-time 8 --num-cells $numcells\
+#        --do-parallel\
+#        --nClusters $numclusters\
+#        --outPrefix $output_dir$output_name"/"
 
-for n_cells in 200 1000 2000; do
+for n_cells in 2000; do
        numcellssample=$n_cells
        echo $numcellssample
 
